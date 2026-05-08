@@ -62,7 +62,9 @@ async function loadStations() {
 // ===== Clic sur une station =====
 async function onStationClick(station) {
   state.selectedStation = station;
+  clearChart('chart');          // vider l'ancien graphique immédiatement
   openChartPanel(station);
+  updateChartMeta('Chargement des données…');
 
   const { periodDays } = getFilterValues();
 
@@ -74,7 +76,6 @@ async function onStationClick(station) {
   }
 
   // 2. Vérifier le cache IndexedDB (TTL 30min)
-  updateChartMeta('Chargement des données…');
   const idbCached = await getObservations(station.code_station, periodDays);
   if (idbCached) {
     state.observationsCache.set(station.code_station, idbCached);
