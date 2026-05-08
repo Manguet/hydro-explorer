@@ -1,0 +1,214 @@
+/* ===== Variables ===== */
+:root {
+  --color-primary: #0d6efd;
+  --color-bg: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-border: #dee2e6;
+  --color-text: #212529;
+  --color-text-muted: #6c757d;
+
+  --header-height: 56px;
+  --filters-width: 280px;
+  --chart-panel-width: 380px;
+  --spacing: 1rem;
+  --radius: 6px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== Reset ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===== Header ===== */
+.he-header {
+  height: var(--header-height);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing);
+  gap: var(--spacing);
+  flex-shrink: 0;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+}
+
+.he-header__brand { display: flex; align-items: baseline; gap: 0.5rem; }
+.he-header__title { font-size: 1.25rem; font-weight: 700; color: var(--color-primary); }
+.he-header__subtitle { font-size: 0.8rem; color: var(--color-text-muted); }
+.he-header__actions { display: flex; gap: 0.5rem; }
+
+/* ===== Main layout ===== */
+.he-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.he-map-container {
+  flex: 1;
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== Boutons ===== */
+.he-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.he-btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.he-btn--secondary {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.he-btn--secondary:hover { background: var(--color-bg); }
+
+.he-btn--ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+  width: 100%;
+  justify-content: center;
+  margin-top: var(--spacing);
+}
+
+.he-btn--ghost:hover { background: var(--color-bg); }
+
+.he-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+}
+
+.he-btn-icon:hover { background: var(--color-bg); }
+.he-btn-icon:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
+
+/* ===== Panneaux latéraux ===== */
+.he-filters,
+.he-chart-panel {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow);
+  overflow-y: auto;
+  z-index: 500;
+  padding: var(--spacing);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+
+.he-filters[hidden],
+.he-chart-panel[hidden] { display: none; }
+
+.he-filters { left: 0; width: var(--filters-width); }
+.he-chart-panel { right: 0; width: var(--chart-panel-width); }
+
+/* ===== Form elements ===== */
+.he-filters__title,
+.he-chart-panel__title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.he-filters__group { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.he-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.he-select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.he-select:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
+
+/* ===== Panneau graphique ===== */
+.he-chart-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.he-chart { min-height: 250px; }
+.he-chart-panel__meta { font-size: 0.8rem; color: var(--color-text-muted); }
+
+/* ===== Statut carte ===== */
+.he-map-status {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 400;
+}
+
+.he-map-status--visible { opacity: 1; }
+
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+  .he-header__subtitle { display: none; }
+  .he-filters { width: 100%; }
+  .he-chart-panel { width: 100%; left: 0; }
+  .he-btn { min-height: 44px; }
+}
+
+/* ===== RGAA : focus visible universel ===== */
+:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }

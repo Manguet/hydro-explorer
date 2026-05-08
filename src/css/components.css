@@ -1,0 +1,73 @@
+/* ===== Marqueurs de station ===== */
+.station-marker {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.station-marker--selected {
+  transform: scale(1.4);
+  border-width: 3px;
+}
+
+/* ===== Popups Leaflet ===== */
+.station-popup h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.station-popup dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.15rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.station-popup dt { color: #6c757d; font-weight: 500; }
+.station-popup dd { color: #212529; }
+
+.station-popup .popup-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.popup-status--normal    { background: #d4edda; color: #155724; }
+.popup-status--vigilance { background: #fff3cd; color: #856404; }
+.popup-status--alerte    { background: #f8d7da; color: #721c24; }
+.popup-status--inactive  { background: #e2e3e5; color: #383d41; }
+
+/* ===== Légende ===== */
+.he-legend {
+  background: white;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  font-size: 0.8rem;
+  line-height: 1.8;
+}
+
+.he-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.he-legend__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
+}
