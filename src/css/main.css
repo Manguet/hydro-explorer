@@ -5,7 +5,9 @@
   --color-surface: #ffffff;
   --color-border: #dee2e6;
   --color-text: #212529;
-  --color-text-muted: #6c757d;
+  /* #5a6270 sur fond blanc = ratio ~5.07:1, conforme RGAA AA (min 4.5:1) */
+  /* Ancienne valeur #6c757d = ~4.48:1, insuffisant pour texte normal < 18px */
+  --color-text-muted: #5a6270;
 
   --header-height: 56px;
   --filters-width: 280px;

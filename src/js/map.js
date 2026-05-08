@@ -52,12 +52,18 @@ function addLegend() {
   const legend = L.control({ position: 'bottomleft' });
   legend.onAdd = () => {
     const container = L.DomUtil.create('div', 'he-legend');
+    // role="region" + aria-label : rend la légende identifiable comme landmark
+    // pour les lecteurs d'écran (RGAA 12.x)
+    container.setAttribute('role', 'region');
     container.setAttribute('aria-label', 'Légende des états de station');
 
     Object.entries(STATUS_LABELS).forEach(([key, label]) => {
       const item = L.DomUtil.create('div', 'he-legend__item', container);
       const dot = L.DomUtil.create('span', 'he-legend__dot', item);
       dot.style.background = STATUS_COLORS[key];
+      // aria-hidden : la pastille est purement décorative, le texte qui suit
+      // fournit l'alternative (RGAA 1.1)
+      dot.setAttribute('aria-hidden', 'true');
       const text = document.createTextNode(label);
       item.appendChild(text);
     });
@@ -72,13 +78,15 @@ function addLegend() {
  * @param {'normal'|'vigilance'|'alerte'|'inactive'} status
  * @param {boolean} selected
  */
-function makeIcon(status, selected = false) {
+function makeIcon(status, selected = false, label = '') {
   const color = STATUS_COLORS[status] || STATUS_COLORS.inactive;
   // color provient de STATUS_COLORS (constantes), safe pour style CSS
   const cls = selected ? 'station-marker station-marker--selected' : 'station-marker';
+  // aria-hidden="true" : le marqueur visuel est décoratif, le title du L.marker
+  // et le popup assurent l'alternative textuelle (RGAA 1.1 / 6.x)
   return L.divIcon({
     className: '',
-    html: `<div class="${cls}" style="background:${color}"></div>`,
+    html: `<div class="${cls}" style="background:${color}" aria-hidden="true"></div>`,
     iconSize: [14, 14],
     iconAnchor: [7, 7],
     popupAnchor: [0, -10],

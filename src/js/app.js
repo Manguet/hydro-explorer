@@ -93,12 +93,25 @@ function openChartPanel(station) {
   document.getElementById('chart-title').textContent =
     station.libelle_station || station.code_station;
   updateChartMeta('');
+
+  // RGAA 7.x — Déplacer le focus vers le titre du panneau à l'ouverture
+  // afin que les utilisateurs de lecteur d'écran soient informés du changement
+  // de contexte. Le titre est rendu focusable temporairement via tabindex="-1".
+  const title = document.getElementById('chart-title');
+  title.setAttribute('tabindex', '-1');
+  title.focus();
 }
 
 function closeChartPanel() {
   document.getElementById('panel-chart').hidden = true;
   clearChart('chart');
   state.selectedStation = null;
+
+  // RGAA 7.x — Rendre le focus au bouton de fermeture n'est pas pertinent ici
+  // (le panneau s'ouvre via un clic sur la carte). On renvoie le focus vers
+  // la carte elle-même pour que la navigation clavier reste cohérente.
+  const mapEl = document.getElementById('map');
+  if (mapEl) mapEl.focus();
 }
 
 function updateChartMeta(text) {

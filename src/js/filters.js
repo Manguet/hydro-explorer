@@ -100,6 +100,9 @@ function resetFilters() {
 
 /**
  * Bascule la visibilité du panneau de filtres.
+ * RGAA 7.x — Gestion du focus : à l'ouverture, le focus est déplacé vers
+ * le premier élément interactif du panneau (le premier select). À la fermeture,
+ * le focus revient sur le bouton déclencheur.
  */
 export function toggleFiltersPanel() {
   const panel = document.getElementById('panel-filters');
@@ -107,4 +110,13 @@ export function toggleFiltersPanel() {
   const isHidden = panel.hidden;
   panel.hidden = !isHidden;
   btn.setAttribute('aria-expanded', String(isHidden));
+
+  if (isHidden) {
+    // Ouverture : déplacer le focus vers le premier champ du panneau
+    const firstFocusable = panel.querySelector('select, button, input');
+    if (firstFocusable) firstFocusable.focus();
+  } else {
+    // Fermeture : renvoyer le focus vers le bouton déclencheur
+    btn.focus();
+  }
 }

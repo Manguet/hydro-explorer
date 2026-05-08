@@ -33,7 +33,7 @@ export function renderChart(containerId, observations, coursEauLabel) {
 
   const layout = {
     annotations: coursEauLabel
-      ? [{ text: coursEauLabel, showarrow: false, xref: 'paper', yref: 'paper', x: 0, y: 1.08, font: { size: 11, color: '#6c757d' } }]
+      ? [{ text: coursEauLabel, showarrow: false, xref: 'paper', yref: 'paper', x: 0, y: 1.08, font: { size: 11, color: '#5a6270' } }]
       : [],
     xaxis: {
       type: 'date',

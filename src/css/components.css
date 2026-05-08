@@ -29,7 +29,8 @@
   font-size: 0.8rem;
 }
 
-.station-popup dt { color: #6c757d; font-weight: 500; }
+/* #5a6270 sur fond blanc = ratio ~5.07:1, conforme RGAA AA */
+.station-popup dt { color: #5a6270; font-weight: 500; }
 .station-popup dd { color: #212529; }
 
 .station-popup .popup-status {
@@ -44,7 +45,9 @@
 }
 
 .popup-status--normal    { background: #d4edda; color: #155724; }
-.popup-status--vigilance { background: #fff3cd; color: #856404; }
+/* #6d5204 sur #fff3cd = ratio ~5.23:1, conforme RGAA AA */
+/* Ancienne valeur #856404 = ~3.97:1, insuffisant pour texte normal */
+.popup-status--vigilance { background: #fff3cd; color: #6d5204; }
 .popup-status--alerte    { background: #f8d7da; color: #721c24; }
 .popup-status--inactive  { background: #e2e3e5; color: #383d41; }
 
