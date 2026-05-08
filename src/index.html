@@ -4,7 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Visualisation des données hydrologiques françaises — API Hub'eau" />
+  <meta name="theme-color" content="#0d6efd" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>Hydro Explorer — Données hydrologiques France</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+
+  <!-- Preconnect pour réduire la latence au premier chargement -->
+  <link rel="preconnect" href="https://hubeau.eaufrance.fr" />
+  <link rel="preconnect" href="https://data.geopf.fr" />
+  <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="preconnect" href="https://cdn.plot.ly" />
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -78,6 +90,26 @@
       <p id="chart-meta" class="he-chart-panel__meta"></p>
     </aside>
   </main>
+
+  <!-- Badge hors-ligne (masqué quand online) -->
+  <div id="offline-badge" class="he-offline-badge" hidden aria-live="polite" aria-atomic="true">
+    ⚡ Hors-ligne &middot; données du <span id="offline-date"></span>
+  </div>
+
+  <!-- Bandeau installation PWA (masqué par défaut) -->
+  <div id="pwa-install-banner" class="he-install-banner" hidden role="complementary" aria-label="Installer l'application">
+    <div class="he-install-banner__info">
+      <span class="he-install-banner__icon" aria-hidden="true">💧</span>
+      <div>
+        <strong>Installer Hydro Explorer</strong>
+        <span>Accès hors-ligne · Fonctionne comme une appli native</span>
+      </div>
+    </div>
+    <div class="he-install-banner__actions">
+      <button id="btn-install-later" class="he-install-btn he-install-btn--later">Plus tard</button>
+      <button id="btn-install-now" class="he-install-btn he-install-btn--now">Installer</button>
+    </div>
+  </div>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

@@ -214,3 +214,94 @@ body {
 
 /* ===== RGAA : focus visible universel ===== */
 :focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
+
+/* ===== PWA : Badge hors-ligne ===== */
+.he-offline-badge {
+  position: fixed;
+  top: calc(var(--header-height) + 0.5rem);
+  right: var(--spacing);
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107;
+  border-radius: 12px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 2000;
+  box-shadow: var(--shadow);
+}
+
+.he-offline-badge[hidden] { display: none; }
+
+/* ===== PWA : Bandeau installation ===== */
+.he-install-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  z-index: 2000;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.he-install-banner[hidden] { display: none; }
+
+.he-install-banner__info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.he-install-banner__icon { font-size: 1.5rem; }
+
+.he-install-banner__info strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.he-install-banner__info span {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.he-install-banner__actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+.he-install-btn {
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+  min-height: 36px;
+}
+
+.he-install-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+.he-install-btn--later {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.he-install-btn--later:hover { background: rgba(255, 255, 255, 0.25); }
+
+.he-install-btn--now {
+  background: #fff;
+  color: var(--color-primary);
+  border: none;
+  font-weight: 700;
+}
+
+.he-install-btn--now:hover { background: #e8f0fe; }
+
+@media (max-width: 640px) {
+  .he-install-banner { flex-direction: column; align-items: flex-start; }
+}
