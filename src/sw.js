@@ -2,7 +2,7 @@
 importScripts('./js/cache-manager.js');
 
 // SYNC: valeur identique à config.js:CACHE_SHELL_NAME (duplication volontaire — classic script ne peut pas importer les ES modules)
-const CACHE_SHELL = 'hydro-shell-v1';
+const CACHE_SHELL = 'hydro-shell-v2';
 
 // Calcul du chemin de base (gère localhost et GitHub Pages /sous-chemin/)
 const SCOPE = self.registration.scope; // ex: 'http://localhost:8081/' ou 'https://user.github.io/hydro-explorer/'
