@@ -48,7 +48,7 @@ function populateDepartmentSelect(stations) {
  */
 function populateTypeSelect(stations) {
   const select = document.getElementById('filter-type');
-  const types = new Set(stations.map(s => s.libelle_type_station).filter(Boolean));
+  const types = new Set(stations.map(s => s.type_station).filter(Boolean));
 
   Array.from(types)
     .sort()
@@ -84,7 +84,7 @@ export function buildFilterPredicate(stationMap) {
     const station = stationMap.get(codeStation);
     if (!station) return false;
     if (department && station.code_departement !== department) return false;
-    if (type && station.libelle_type_station !== type) return false;
+    if (type && station.type_station !== type) return false;
     return true;
   };
 }

@@ -1,8 +1,8 @@
 import {
-  IGN_TILES_URL,
-  IGN_ATTRIBUTION,
   MAP_CENTER,
   MAP_ZOOM_INIT,
+  MAP_BASEMAPS,
+  MAP_OVERLAYS,
   STATUS_COLORS,
   STATUS_LABELS,
 } from './config.js';
@@ -25,14 +25,29 @@ export function initMap(containerId, onStationClick) {
   map = L.map(containerId, {
     center: MAP_CENTER,
     zoom: MAP_ZOOM_INIT,
-    zoomControl: true,
+    zoomControl: false,  // repositionné en haut à droite pour libérer le panneau filtres
   });
 
-  L.tileLayer(IGN_TILES_URL, {
-    attribution: IGN_ATTRIBUTION,
-    minZoom: 3,
-    maxZoom: 18,
-  }).addTo(map);
+  // Contrôles zoom en haut à droite (le panneau filtres est à gauche)
+  L.control.zoom({ position: 'topright' }).addTo(map);
+
+  // Couches de fond
+  const baseLayers = {};
+  let defaultLayer = null;
+  Object.entries(MAP_BASEMAPS).forEach(([name, def]) => {
+    const layer = L.tileLayer(def.url, def.options);
+    baseLayers[name] = layer;
+    if (def.default) { layer.addTo(map); defaultLayer = layer; }
+  });
+
+  // Overlays
+  const overlayLayers = {};
+  Object.entries(MAP_OVERLAYS).forEach(([name, def]) => {
+    overlayLayers[name] = L.tileLayer(def.url, def.options);
+  });
+
+  // Sélecteur de couches (en haut à droite, sous le zoom)
+  L.control.layers(baseLayers, overlayLayers, { position: 'topright', collapsed: true }).addTo(map);
 
   clusterGroup = L.markerClusterGroup({
     chunkedLoading: true,
@@ -113,7 +128,7 @@ function buildPopupNode(station, status) {
     ['Code', station.code_station],
     ["Cours d'eau", station.libelle_cours_eau],
     ['Département', station.libelle_departement],
-    ['Type', station.libelle_type_station],
+    ['Type', station.type_station],
   ];
   fields.forEach(([label, value]) => {
     const dt = document.createElement('dt');

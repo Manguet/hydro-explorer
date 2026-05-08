@@ -1,15 +1,36 @@
 // URLs API Hub'eau
 export const API_HYDRO_BASE = 'https://hubeau.eaufrance.fr/api/v2/hydrometrie';
 
-// Tuiles IGN Géoplateforme (accès libre depuis juin 2022, sans clé API)
-export const IGN_TILES_URL =
-  'https://data.geopf.fr/wmts?' +
-  'SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0' +
-  '&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2' +
-  '&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM' +
-  '&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
+// Couches de fond de carte (basemaps) — IGN Géoplateforme + OSM
+const _IGN = 'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
+const _IGN_ATTR = '&copy; <a href="https://www.ign.fr">IGN</a> G&eacute;oplateforme';
 
-export const IGN_ATTRIBUTION = '&copy; <a href="https://www.ign.fr">IGN</a> G&eacute;oplateforme';
+export const MAP_BASEMAPS = {
+  'Plan IGN': {
+    url: `${_IGN}&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png`,
+    options: { attribution: _IGN_ATTR, minZoom: 3, maxZoom: 18 },
+    default: true,
+  },
+  'Orthophotos': {
+    url: `${_IGN}&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg`,
+    options: { attribution: _IGN_ATTR, minZoom: 3, maxZoom: 20 },
+  },
+  'OpenStreetMap': {
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    options: { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', minZoom: 3, maxZoom: 19 },
+  },
+};
+
+export const MAP_OVERLAYS = {
+  'Réseau hydrographique': {
+    url: `${_IGN}&LAYER=HYDROGRAPHY.HYDROGRAPHY&STYLE=normal&FORMAT=image/png`,
+    options: { attribution: _IGN_ATTR, opacity: 0.7, minZoom: 3, maxZoom: 18 },
+  },
+};
+
+// Rétrocompatibilité cache-manager.js (classic script, ne peut pas importer)
+export const IGN_TILES_URL = MAP_BASEMAPS['Plan IGN'].url;
+export const IGN_ATTRIBUTION = _IGN_ATTR;
 
 // Centre et zoom initial — centré sur Parthenay (Deux-Sèvres), zoom 6 pour voir les 3/4 de la France
 export const MAP_CENTER = [46.648, -0.247];
@@ -40,7 +61,7 @@ export const STATIONS_FIELDS = [
   'libelle_departement',
   'code_departement',
   'libelle_cours_eau',
-  'libelle_type_station',
+  'type_station',
   'en_service',
 ].join(',');
 

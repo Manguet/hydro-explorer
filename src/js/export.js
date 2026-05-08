@@ -18,7 +18,7 @@ export function exportCSV(stations, observationsCache) {
       station.libelle_station || '',
       station.libelle_cours_eau || '',
       station.libelle_departement || '',
-      station.libelle_type_station || '',
+      station.type_station || '',
       latest ? latest.date_obs : '',
       latest != null ? String(latest.resultat_obs) : '',
       resolveStatusLabel(obs),
