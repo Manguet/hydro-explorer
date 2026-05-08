@@ -40,6 +40,8 @@ export async function getStations() {
         resolve(all.map(({ cachedAt: _, ...s }) => s));
       };
       req.onerror = () => resolve(null);
+      tx.oncomplete = () => db.close();
+      tx.onerror = () => db.close();
     });
   } catch {
     return null;
@@ -59,8 +61,8 @@ export async function saveStations(stations) {
       const store = tx.objectStore('stations');
       store.clear();
       stations.forEach(s => store.put({ ...s, cachedAt: now }));
-      tx.oncomplete = () => resolve();
-      tx.onerror = (e) => reject(e.target.error);
+      tx.oncomplete = () => { db.close(); resolve(); };
+      tx.onerror = (e) => { db.close(); reject(e.target.error); };
     });
   } catch {
     // Échec IDB non bloquant — l'app continue sans cache
@@ -87,6 +89,8 @@ export async function getObservations(codeStation, days) {
         resolve(record.data);
       };
       req.onerror = () => resolve(null);
+      tx.oncomplete = () => db.close();
+      tx.onerror = () => db.close();
     });
   } catch {
     return null;
@@ -106,8 +110,8 @@ export async function saveObservations(codeStation, days, data) {
     return new Promise((resolve, reject) => {
       const tx = db.transaction('observations', 'readwrite');
       tx.objectStore('observations').put({ id, data, cachedAt: Date.now() });
-      tx.oncomplete = () => resolve();
-      tx.onerror = (e) => reject(e.target.error);
+      tx.oncomplete = () => { db.close(); resolve(); };
+      tx.onerror = (e) => { db.close(); reject(e.target.error); };
     });
   } catch {
     // Échec IDB non bloquant
