@@ -29,7 +29,7 @@ export async function fetchStations() {
  * @returns {Promise<Array>} Observations triées du plus récent au plus ancien
  */
 export async function fetchObservations(codeStation, days = 30) {
-  const url = new URL(`${API_HYDRO_BASE}/obs_tr`);
+  const url = new URL(`${API_HYDRO_BASE}/observations_tr`);
   url.searchParams.set('code_entite', codeStation);
   url.searchParams.set('grandeur_hydro', 'H');
   url.searchParams.set('size', String(days * 24 * 2)); // max 2 obs/h
