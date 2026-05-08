@@ -40,6 +40,8 @@
       font-weight: 600;
     }
     button:hover { background: #0b5ed7; }
+    button:focus-visible { outline: 3px solid #0d6efd; outline-offset: 3px; }
+    button:active { background: #0a58ca; }
   </style>
 </head>
 <body>
@@ -49,14 +51,19 @@
     <p>Vous êtes actuellement hors-ligne et cette page n'est pas encore en cache.</p>
     <p>Reconnectez-vous à internet pour accéder aux données hydrologiques.</p>
     <p class="last-sync" id="last-sync"></p>
-    <button onclick="window.location.reload()">Réessayer</button>
+    <button id="btn-retry">Réessayer</button>
   </div>
   <script>
+    document.getElementById('btn-retry').addEventListener('click', () => window.location.reload());
+
     const ts = localStorage.getItem('hydro-last-sync');
-    if (ts) {
-      const d = new Date(parseInt(ts));
-      document.getElementById('last-sync').textContent =
-        'Dernière synchronisation : ' + d.toLocaleString('fr-FR');
+    if (ts && /^\d+$/.test(ts)) {
+      const ms = parseInt(ts, 10);
+      const d = new Date(ms);
+      if (!isNaN(d.getTime())) {
+        document.getElementById('last-sync').textContent =
+          'Dernière synchronisation : ' + d.toLocaleString('fr-FR');
+      }
     }
   </script>
 </body>
