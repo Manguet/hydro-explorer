@@ -1,6 +1,7 @@
 // sw.js — CLASSIC SCRIPT, à la racine de src/
 importScripts('./js/cache-manager.js');
 
+// SYNC: valeur identique à config.js:CACHE_SHELL_NAME (duplication volontaire — classic script ne peut pas importer les ES modules)
 const CACHE_SHELL = 'hydro-shell-v1';
 
 // Calcul du chemin de base (gère localhost et GitHub Pages /sous-chemin/)
@@ -41,14 +42,14 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_SHELL)
       .then((cache) => cache.addAll(SHELL_ASSETS))
       .then(() => precacheTiles())   // défini dans cache-manager.js
-      .then(() => self.skipWaiting())
       .catch((err) => console.warn('[SW] Install partiel :', err))
+      .finally(() => self.skipWaiting()) // toujours activé, même si le précache échoue partiellement
   );
 });
 
 // ===== ACTIVATE : supprimer les anciens caches =====
 self.addEventListener('activate', (event) => {
-  const KNOWN_CACHES = [CACHE_SHELL, 'hydro-tiles-v1'];
+  const KNOWN_CACHES = [CACHE_SHELL, 'hydro-tiles-v1']; // SYNC: 'hydro-tiles-v1' = config.js:CACHE_TILES_NAME
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(

@@ -23,6 +23,7 @@ const state = {
   stationMap: new Map(),          // code_station → station
   observationsCache: new Map(),   // code_station → Array<observation>
   selectedStation: null,
+  lastPeriodDays: null,           // détecte les changements de période pour invalider le cache mémoire
 };
 
 // ===== Initialisation =====
@@ -141,8 +142,12 @@ function updateChartMeta(text) {
 
 // ===== Filtres =====
 function onFilterChange() {
-  // Invalide le cache mémoire : les observations dépendent de periodDays
-  state.observationsCache.clear();
+  // Invalide le cache mémoire uniquement si la période a changé (les observations en dépendent)
+  const { periodDays } = getFilterValues();
+  if (state.lastPeriodDays !== null && state.lastPeriodDays !== periodDays) {
+    state.observationsCache.clear();
+  }
+  state.lastPeriodDays = periodDays;
   const predicate = buildFilterPredicate(state.stationMap);
   applyMarkerFilter(predicate);
 }
