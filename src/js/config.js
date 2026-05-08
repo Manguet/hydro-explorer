@@ -46,3 +46,13 @@ export const STATIONS_FIELDS = [
 
 // Nombre de jours d'observations par défaut
 export const DEFAULT_PERIOD_DAYS = 30;
+
+// ===== Cache & PWA =====
+export const CACHE_SHELL_NAME = 'hydro-shell-v1';
+export const CACHE_TILES_NAME = 'hydro-tiles-v1';
+export const STATIONS_TTL_MS = 24 * 3_600_000;      // 24 heures
+export const OBSERVATIONS_TTL_MS = 30 * 60_000;     // 30 minutes
+export const TILE_ZOOM_MIN = 3;
+export const TILE_ZOOM_MAX = 8;
+// Bounding box France métropolitaine pour le précache des tuiles
+export const FRANCE_BBOX = { west: -5.5, east: 10.0, south: 41.0, north: 51.5 };
