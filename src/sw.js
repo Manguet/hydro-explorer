@@ -86,7 +86,8 @@ self.addEventListener('fetch', (event) => {
         return fetch(request).then((response) => {
           if (response.ok) {
             caches.open('hydro-tiles-v1')
-              .then((c) => c.put(request, response.clone()));
+              .then((c) => c.put(request, response.clone()))
+              .catch((err) => console.warn('[SW] Tile cache failed:', err));
           }
           return response;
         }).catch(() => undefined);
