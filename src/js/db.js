@@ -33,15 +33,14 @@ export async function getStations() {
       const req = tx.objectStore('stations').getAll();
       req.onsuccess = () => {
         const all = req.result;
-        if (!all || all.length === 0) return resolve(null);
+        if (!all || all.length === 0) { db.close(); return resolve(null); }
         const cachedAt = all[0]?.cachedAt;
-        if (!cachedAt || Date.now() - cachedAt > STATIONS_TTL_MS) return resolve(null);
+        if (!cachedAt || Date.now() - cachedAt > STATIONS_TTL_MS) { db.close(); return resolve(null); }
         // Retirer le champ cachedAt avant de renvoyer (l'app ne doit pas le voir)
+        db.close();
         resolve(all.map(({ cachedAt: _, ...s }) => s));
       };
-      req.onerror = () => resolve(null);
-      tx.oncomplete = () => db.close();
-      tx.onerror = () => db.close();
+      req.onerror = () => { db.close(); resolve(null); };
     });
   } catch {
     return null;
@@ -84,13 +83,12 @@ export async function getObservations(codeStation, days) {
       const req = tx.objectStore('observations').get(id);
       req.onsuccess = () => {
         const record = req.result;
-        if (!record) return resolve(null);
-        if (Date.now() - record.cachedAt > OBSERVATIONS_TTL_MS) return resolve(null);
+        if (!record) { db.close(); return resolve(null); }
+        if (Date.now() - record.cachedAt > OBSERVATIONS_TTL_MS) { db.close(); return resolve(null); }
+        db.close();
         resolve(record.data);
       };
-      req.onerror = () => resolve(null);
-      tx.oncomplete = () => db.close();
-      tx.onerror = () => db.close();
+      req.onerror = () => { db.close(); resolve(null); };
     });
   } catch {
     return null;
