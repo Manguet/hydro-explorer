@@ -141,6 +141,8 @@ function updateChartMeta(text) {
 
 // ===== Filtres =====
 function onFilterChange() {
+  // Invalide le cache mémoire : les observations dépendent de periodDays
+  state.observationsCache.clear();
   const predicate = buildFilterPredicate(state.stationMap);
   applyMarkerFilter(predicate);
 }
