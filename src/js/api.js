@@ -41,6 +41,8 @@ export async function fetchObservations(codeStation, days = 30) {
   url.searchParams.set('date_debut_obs', dateDebut.toISOString().slice(0, 19));
 
   const response = await fetch(url.toString());
+  // 404 = aucune observation trouvée pour cette station/période (résultat vide, pas une erreur)
+  if (response.status === 404) return [];
   if (!response.ok) {
     throw new Error(`Erreur Hub'eau observations : ${response.status} ${response.statusText}`);
   }
