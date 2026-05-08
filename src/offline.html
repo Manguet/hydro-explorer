@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hydro Explorer — Hors-ligne</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      background: #f8f9fa;
+      color: #212529;
+      padding: 2rem;
+      text-align: center;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,.1);
+      max-width: 380px;
+    }
+    .icon { font-size: 3rem; margin-bottom: 1rem; }
+    h1 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #0d6efd; }
+    p { font-size: 0.9rem; color: #6c757d; line-height: 1.6; margin-bottom: 1rem; }
+    .last-sync { font-size: 0.8rem; color: #adb5bd; }
+    button {
+      margin-top: 1rem;
+      padding: 0.6rem 1.5rem;
+      background: #0d6efd;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { background: #0b5ed7; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">💧</div>
+    <h1>Hydro Explorer</h1>
+    <p>Vous êtes actuellement hors-ligne et cette page n'est pas encore en cache.</p>
+    <p>Reconnectez-vous à internet pour accéder aux données hydrologiques.</p>
+    <p class="last-sync" id="last-sync"></p>
+    <button onclick="window.location.reload()">Réessayer</button>
+  </div>
+  <script>
+    const ts = localStorage.getItem('hydro-last-sync');
+    if (ts) {
+      const d = new Date(parseInt(ts));
+      document.getElementById('last-sync').textContent =
+        'Dernière synchronisation : ' + d.toLocaleString('fr-FR');
+    }
+  </script>
+</body>
+</html>
