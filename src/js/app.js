@@ -14,6 +14,8 @@ import {
   toggleFiltersPanel,
 } from './filters.js';
 import { exportCSV } from './export.js';
+import { getStations, saveStations, getObservations, saveObservations } from './db.js';
+import { registerSW, markSynced } from './pwa.js';
 
 // ===== État global =====
 const state = {
@@ -25,6 +27,7 @@ const state = {
 
 // ===== Initialisation =====
 document.addEventListener('DOMContentLoaded', async () => {
+  registerSW();
   initMap('map', onStationClick);
   bindUIEvents();
   await loadStations();
@@ -34,13 +37,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadStations() {
   showStatus('Chargement des stations…');
   try {
-    state.allStations = await fetchStations();
+    // 1. Vérifier le cache IndexedDB (TTL 24h)
+    let stations = await getStations();
+    if (stations) {
+      showStatus(`${stations.length} stations (cache local)`, 3000);
+    } else {
+      // 2. Fetch réseau si cache absent ou expiré
+      stations = await fetchStations();
+      await saveStations(stations);
+      markSynced();
+      showStatus(`${stations.length} stations chargées`, 4000);
+    }
+    state.allStations = stations;
     state.allStations.forEach(s => state.stationMap.set(s.code_station, s));
-
     renderStations(state.allStations);
     initFilters(state.allStations, onFilterChange);
-
-    showStatus(`${state.allStations.length} stations chargées`, 4000);
   } catch (err) {
     showStatus(`Erreur de chargement : ${err.message}`, 10000);
     console.error('[Hydro Explorer]', err);
@@ -52,20 +63,30 @@ async function onStationClick(station) {
   state.selectedStation = station;
   openChartPanel(station);
 
-  // Si observations déjà en cache, afficher directement
-  const cached = state.observationsCache.get(station.code_station);
-  if (cached) {
-    displayChart(station, cached);
+  const { periodDays } = getFilterValues();
+
+  // 1. Vérifier le cache mémoire (session)
+  const memCached = state.observationsCache.get(station.code_station);
+  if (memCached) {
+    displayChart(station, memCached);
     return;
   }
 
-  const { periodDays } = getFilterValues();
+  // 2. Vérifier le cache IndexedDB (TTL 30min)
   updateChartMeta('Chargement des données…');
+  const idbCached = await getObservations(station.code_station, periodDays);
+  if (idbCached) {
+    state.observationsCache.set(station.code_station, idbCached);
+    displayChart(station, idbCached);
+    return;
+  }
 
+  // 3. Fetch réseau
   try {
     const observations = await fetchObservations(station.code_station, periodDays);
+    await saveObservations(station.code_station, periodDays, observations);
+    markSynced();
     state.observationsCache.set(station.code_station, observations);
-
     const status = computeStationStatus(observations);
     updateMarkerStatus(station.code_station, status);
     displayChart(station, observations);
