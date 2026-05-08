@@ -11,9 +11,9 @@ export const IGN_TILES_URL =
 
 export const IGN_ATTRIBUTION = '&copy; <a href="https://www.ign.fr">IGN</a> G&eacute;oplateforme';
 
-// Centre France et zoom initial
-export const MAP_CENTER = [46.5, 1.7];
-export const MAP_ZOOM_INIT = 6;
+// Centre et zoom initial — centré sur Parthenay (Deux-Sèvres) avec la France bien visible
+export const MAP_CENTER = [46.648, -0.247];
+export const MAP_ZOOM_INIT = 7;
 
 // Couleurs des marqueurs selon l'état de la station
 export const STATUS_COLORS = {
