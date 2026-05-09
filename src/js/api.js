@@ -51,6 +51,33 @@ export async function fetchObservations(codeStation, days = 30) {
 }
 
 /**
+ * Récupère les observations de débit (Q) pour une station sur N jours.
+ * Identique à fetchObservations mais avec grandeur_hydro=Q.
+ * @param {string} codeStation
+ * @param {number} days
+ * @returns {Promise<Array>}
+ */
+export async function fetchObservationsDebit(codeStation, days = 30) {
+  const url = new URL(`${API_HYDRO_BASE}/observations_tr`);
+  url.searchParams.set('code_entite', codeStation);
+  url.searchParams.set('grandeur_hydro', 'Q');
+  url.searchParams.set('size', String(days * 24 * 2));
+  url.searchParams.set('sort', 'desc');
+
+  const dateDebut = new Date();
+  dateDebut.setDate(dateDebut.getDate() - days);
+  url.searchParams.set('date_debut_obs', dateDebut.toISOString().slice(0, 19));
+
+  const response = await fetch(url.toString());
+  if (response.status === 404) return [];
+  if (!response.ok) {
+    throw new Error(`Erreur Hub'eau débit : ${response.status} ${response.statusText}`);
+  }
+  const json = await response.json();
+  return json.data;
+}
+
+/**
  * Détermine l'état d'une station à partir de ses dernières observations.
  * Logique simplifiée (pour démo) :
  *  - inactive  : aucune observation
@@ -67,4 +94,24 @@ export function computeStationStatus(observations) {
   if (ageHours > 24) return 'inactive';
   if (ageHours > 2) return 'vigilance';
   return 'normal';
+}
+
+const API_PIEZO_BASE = 'https://hubeau.eaufrance.fr/api/v1/niveaux_nappes';
+
+/**
+ * Récupère les stations piézométriques actives (nappes souterraines).
+ * @returns {Promise<Array>}
+ */
+export async function fetchPiezometryStations() {
+  const url = new URL(`${API_PIEZO_BASE}/stations`);
+  url.searchParams.set('format', 'json');
+  url.searchParams.set('size', '3000');
+  url.searchParams.set('fields', 'code_bss,nom_commune,x,y,altitude_station,profondeur_investigation');
+
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    throw new Error(`Erreur Hub'eau piézométrie : ${response.status}`);
+  }
+  const json = await response.json();
+  return json.data.filter(s => s.x !== null && s.y !== null);
 }

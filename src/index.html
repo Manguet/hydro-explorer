@@ -34,8 +34,22 @@
       <span class="he-header__subtitle">Données hydrologiques — Hub'eau</span>
     </div>
     <nav class="he-header__actions" aria-label="Actions principales">
+      <div class="he-search" role="search" aria-label="Recherche de station">
+        <input
+          id="search-station"
+          type="search"
+          class="he-search__input"
+          placeholder="Rechercher une station…"
+          aria-label="Rechercher une station par nom ou code"
+          autocomplete="off"
+        />
+        <button id="btn-search-clear" class="he-search__clear" aria-label="Effacer la recherche" hidden>&#x2715;</button>
+      </div>
       <button id="btn-filters" class="he-btn he-btn--secondary" aria-expanded="false" aria-controls="panel-filters">
         Filtres
+      </button>
+      <button id="btn-geolocate" class="he-btn he-btn--secondary" aria-label="Centrer la carte sur ma position">
+        &#x25CE; Me localiser
       </button>
       <button id="btn-export" class="he-btn he-btn--secondary" aria-label="Exporter les données au format CSV">
         Exporter CSV
@@ -63,6 +77,16 @@
       </div>
 
       <div class="he-filters__group">
+        <label for="filter-status" class="he-label">Statut</label>
+        <select id="filter-status" class="he-select">
+          <option value="">Tous les statuts</option>
+          <option value="normal">Normal</option>
+          <option value="vigilance">Vigilance</option>
+          <option value="inactive">Inactif</option>
+        </select>
+      </div>
+
+      <div class="he-filters__group">
         <label for="filter-period" class="he-label">Période du graphique</label>
         <select id="filter-period" class="he-select">
           <option value="7">7 derniers jours</option>
@@ -84,9 +108,18 @@
     <aside id="panel-chart" class="he-chart-panel" aria-label="Graphique de la station sélectionnée" hidden>
       <header class="he-chart-panel__header">
         <h2 id="chart-title" class="he-chart-panel__title">Station</h2>
+        <div class="he-chart-toggle" role="group" aria-label="Grandeur affichée">
+          <label class="he-chart-toggle__opt">
+            <input type="radio" name="chart-grandeur" value="H" checked /> H
+          </label>
+          <label class="he-chart-toggle__opt">
+            <input type="radio" name="chart-grandeur" value="Q" /> Q
+          </label>
+        </div>
         <button id="btn-close-chart" class="he-btn-icon" aria-label="Fermer le panneau graphique" aria-controls="panel-chart">&#x2715;</button>
       </header>
       <div id="chart" class="he-chart" role="figure" aria-label="Graphique de hauteur d'eau"></div>
+      <div id="chart-stats" class="he-chart-stats" aria-label="Statistiques" hidden></div>
       <p id="chart-meta" class="he-chart-panel__meta"></p>
     </aside>
   </main>

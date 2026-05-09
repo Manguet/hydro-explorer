@@ -1,3 +1,5 @@
+import { TYPE_STATION_LABELS } from './config.js';
+
 /**
  * Initialise le panneau de filtres à partir du tableau de stations.
  * @param {Array}    stations       - Toutes les stations chargées
@@ -7,7 +9,7 @@ export function initFilters(stations, onFilterChange) {
   populateDepartmentSelect(stations);
   populateTypeSelect(stations);
 
-  ['filter-department', 'filter-type', 'filter-period'].forEach(id => {
+  ['filter-department', 'filter-type', 'filter-status', 'filter-period'].forEach(id => {
     document.getElementById(id).addEventListener('change', onFilterChange);
   });
 
@@ -55,36 +57,42 @@ function populateTypeSelect(stations) {
     .forEach(type => {
       const opt = document.createElement('option');
       opt.value = type;
-      opt.textContent = type;
+      opt.textContent = TYPE_STATION_LABELS[type] || type;
       select.appendChild(opt);
     });
 }
 
 /**
  * Retourne la valeur courante des filtres.
- * @returns {{ department: string, type: string, periodDays: number }}
+ * @returns {{ department: string, type: string, status: string, periodDays: number }}
  */
 export function getFilterValues() {
   return {
     department: document.getElementById('filter-department').value,
     type: document.getElementById('filter-type').value,
+    status: document.getElementById('filter-status').value,
     periodDays: parseInt(document.getElementById('filter-period').value, 10),
   };
 }
 
 /**
  * Retourne un prédicat de filtrage basé sur les valeurs UI courantes.
- * @param {Map<string, Object>} stationMap - code_station → station
+ * @param {Map<string, Object>} stationMap       - code_station → station
+ * @param {Map<string, string>} stationStatusMap - code_station → 'normal'|'vigilance'|'inactive'
  * @returns {Function} (codeStation: string) => boolean
  */
-export function buildFilterPredicate(stationMap) {
-  const { department, type } = getFilterValues();
+export function buildFilterPredicate(stationMap, stationStatusMap = new Map()) {
+  const { department, type, status } = getFilterValues();
 
   return (codeStation) => {
     const station = stationMap.get(codeStation);
     if (!station) return false;
     if (department && station.code_departement !== department) return false;
     if (type && station.type_station !== type) return false;
+    if (status) {
+      const stStatus = stationStatusMap.get(codeStation);
+      if (stStatus && stStatus !== status) return false;
+    }
     return true;
   };
 }
@@ -95,6 +103,7 @@ export function buildFilterPredicate(stationMap) {
 function resetFilters() {
   document.getElementById('filter-department').value = '';
   document.getElementById('filter-type').value = '';
+  document.getElementById('filter-status').value = '';
   document.getElementById('filter-period').value = '30';
 }
 

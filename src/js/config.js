@@ -52,6 +52,17 @@ export const STATUS_LABELS = {
   inactive: 'Inactif',
 };
 
+// Labels lisibles pour les codes type_station Hub'eau
+export const TYPE_STATION_LABELS = {
+  STD:   'Standard (H + Q)',
+  DEB:   'Débit',
+  H:     'Hauteur',
+  LIMNI: 'Limnimètre',
+  PIEZO: 'Piézomètre',
+  PLU:   'Pluviomètre',
+  OA:    'Ouvrage',
+};
+
 // Champs demandés à l'API stations (réduit la taille de réponse)
 export const STATIONS_FIELDS = [
   'code_station',

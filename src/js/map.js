@@ -6,10 +6,10 @@ import {
   STATUS_COLORS,
   STATUS_LABELS,
 } from './config.js';
-import { escapeHtml } from './utils.js';
 
 let map;
 let clusterGroup;
+let layerControl;
 // code_station → { marker, station, status }
 const stationIndex = new Map();
 let onClickCallback;
@@ -47,7 +47,7 @@ export function initMap(containerId, onStationClick) {
   });
 
   // Sélecteur de couches (en haut à droite, sous le zoom)
-  L.control.layers(baseLayers, overlayLayers, { position: 'topright', collapsed: true }).addTo(map);
+  layerControl = L.control.layers(baseLayers, overlayLayers, { position: 'topright', collapsed: true }).addTo(map);
 
   clusterGroup = L.markerClusterGroup({
     chunkedLoading: true,
@@ -93,7 +93,7 @@ function addLegend() {
  * @param {'normal'|'vigilance'|'alerte'|'inactive'} status
  * @param {boolean} selected
  */
-function makeIcon(status, selected = false, label = '') {
+function makeIcon(status, selected = false) {
   const color = STATUS_COLORS[status] || STATUS_COLORS.inactive;
   // color provient de STATUS_COLORS (constantes), safe pour style CSS
   const cls = selected ? 'station-marker station-marker--selected' : 'station-marker';
@@ -218,3 +218,51 @@ export function applyMarkerFilter(predicate) {
 export function getAllStations() {
   return Array.from(stationIndex.values()).map(e => e.station);
 }
+
+let geoMarker = null;
+
+/**
+ * Centre la carte sur des coordonnées et place un marqueur de position.
+ * Remplace l'éventuel marqueur précédent.
+ * @param {number} lat
+ * @param {number} lng
+ */
+export function flyToLocation(lat, lng) {
+  if (geoMarker) {
+    map.removeLayer(geoMarker);
+  }
+  geoMarker = L.circleMarker([lat, lng], {
+    radius: 10,
+    color: '#0d6efd',
+    fillColor: '#0d6efd',
+    fillOpacity: 0.4,
+    weight: 2,
+  }).addTo(map);
+  geoMarker.bindPopup('Votre position').openPopup();
+  map.flyTo([lat, lng], 11, { duration: 1.2 });
+}
+
+/**
+ * Centre la carte sur une station sélectionnée.
+ * Zoom à 12 si le zoom actuel est inférieur, sinon garde le zoom actuel.
+ * @param {string} codeStation
+ */
+export function panToStation(codeStation) {
+  const entry = stationIndex.get(codeStation);
+  if (!entry) return;
+  const { lat, lng } = entry.marker.getLatLng();
+  const targetZoom = Math.max(map.getZoom(), 12);
+  map.flyTo([lat, lng], targetZoom, { duration: 0.8 });
+}
+
+/**
+ * Ajoute un overlay au sélecteur de couches existant.
+ * @param {string} name - Label affiché dans le sélecteur
+ * @param {L.Layer} layer - Layer Leaflet à ajouter
+ */
+export function addOverlayLayer(name, layer) {
+  if (layerControl) layerControl.addOverlay(layer, name);
+}
+
+/** Retourne l'instance Leaflet (pour les modules externes). */
+export function getMap() { return map; }

@@ -1,12 +1,11 @@
 /**
- * Affiche ou met à jour le graphique Plotly dans `containerId`.
- * Plotly gère lui-même l'échappement de ses valeurs de données.
- *
- * @param {string} containerId    - ID de l'élément DOM hôte
- * @param {Array}  observations   - Tableau d'observations Hub'eau (trié desc)
- * @param {string} coursEauLabel  - Nom du cours d'eau pour le sous-titre
+ * Affiche ou met à jour le graphique Plotly.
+ * @param {string} containerId
+ * @param {Array}  observations      - Observations hauteur H (trié desc)
+ * @param {string} coursEauLabel     - Nom du cours d'eau
+ * @param {Array}  [observationsQ]   - Observations débit Q (trié desc), optionnel
  */
-export function renderChart(containerId, observations, coursEauLabel) {
+export function renderChart(containerId, observations, coursEauLabel, observationsQ = null) {
   const el = document.getElementById(containerId);
 
   if (!observations || observations.length === 0) {
@@ -15,21 +14,21 @@ export function renderChart(containerId, observations, coursEauLabel) {
     return;
   }
 
-  // Les observations arrivent du plus récent au plus ancien → inverser pour l'axe X
   const sorted = [...observations].reverse();
   const dates = sorted.map(o => o.date_obs);
   const values = sorted.map(o => o.resultat_obs);
 
-  const trace = {
+  const traces = [{
     x: dates,
     y: values,
     type: 'scatter',
     mode: 'lines+markers',
     name: 'Hauteur (mm)',
+    yaxis: 'y',
     line: { color: '#0d6efd', width: 2 },
     marker: { size: 4, color: '#0d6efd' },
     hovertemplate: '%{x|%d/%m/%Y %H:%M}<br><b>%{y:.1f} mm</b><extra></extra>',
-  };
+  }];
 
   const layout = {
     annotations: coursEauLabel
@@ -54,6 +53,29 @@ export function renderChart(containerId, observations, coursEauLabel) {
     hovermode: 'closest',
   };
 
+  if (observationsQ && observationsQ.length > 0) {
+    const sortedQ = [...observationsQ].reverse();
+    traces.push({
+      x: sortedQ.map(o => o.date_obs),
+      y: sortedQ.map(o => o.resultat_obs),
+      type: 'scatter',
+      mode: 'lines+markers',
+      name: 'Débit (m³/s)',
+      yaxis: 'y2',
+      line: { color: '#e67e22', width: 2, dash: 'dot' },
+      marker: { size: 4, color: '#e67e22' },
+      hovertemplate: '%{x|%d/%m/%Y %H:%M}<br><b>%{y:.2f} m³/s</b><extra></extra>',
+    });
+    layout.yaxis2 = {
+      title: { text: 'Débit (m³/s)', font: { size: 11 } },
+      overlaying: 'y',
+      side: 'right',
+      showgrid: false,
+    };
+    layout.showlegend = true;
+    layout.margin.r = 70;
+  }
+
   const config = {
     responsive: true,
     displayModeBar: true,
@@ -62,7 +84,36 @@ export function renderChart(containerId, observations, coursEauLabel) {
     displaylogo: false,
   };
 
-  Plotly.react(containerId, [trace], layout, config);
+  Plotly.react(containerId, traces, layout, config);
+
+  // Statistiques
+  const statsEl = document.getElementById('chart-stats');
+  if (statsEl) {
+    const nums = values.filter(v => v != null && !isNaN(v));
+    if (nums.length > 0) {
+      const min = nums.reduce((a, b) => (b < a ? b : a), nums[0]);
+      const max = nums.reduce((a, b) => (b > a ? b : a), nums[0]);
+      const avg = nums.reduce((a, b) => a + b, 0) / nums.length;
+      statsEl.hidden = false;
+      statsEl.textContent = '';
+      const parts = [
+        { label: 'Min', value: `${min.toFixed(1)} mm` },
+        { label: 'Max', value: `${max.toFixed(1)} mm` },
+        { label: 'Moy.', value: `${avg.toFixed(1)} mm` },
+      ];
+      parts.forEach(({ label, value }) => {
+        const span = document.createElement('span');
+        span.className = 'he-chart-stats__item';
+        const strong = document.createElement('strong');
+        strong.textContent = label;
+        span.appendChild(strong);
+        span.appendChild(document.createTextNode(` ${value}`));
+        statsEl.appendChild(span);
+      });
+    } else {
+      statsEl.hidden = true;
+    }
+  }
 }
 
 /**
@@ -71,4 +122,6 @@ export function renderChart(containerId, observations, coursEauLabel) {
  */
 export function clearChart(containerId) {
   Plotly.purge(containerId);
+  const statsEl = document.getElementById('chart-stats');
+  if (statsEl) { statsEl.hidden = true; statsEl.textContent = ''; }
 }
