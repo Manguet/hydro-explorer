@@ -80,7 +80,7 @@ export const STATIONS_FIELDS = [
 export const DEFAULT_PERIOD_DAYS = 30;
 
 // ===== Cache & PWA =====
-export const CACHE_SHELL_NAME = 'hydro-shell-v2';
+export const CACHE_SHELL_NAME = 'hydro-shell-v3';
 export const CACHE_TILES_NAME = 'hydro-tiles-v1';
 export const STATIONS_TTL_MS = 24 * 3_600_000;      // 24 heures
 export const OBSERVATIONS_TTL_MS = 30 * 60_000;     // 30 minutes
